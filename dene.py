@@ -12,7 +12,10 @@ def pair_finder(map, index):
     for i in range(0,n-2):
         for j in range(i+1,n-1):
             if map.get(list[i])[index] == map.get(list[j])[index]:
-                final.append([list[i],list[j]])
+                if index == 0:
+                    final.append((list[i],list[j],map.get(list[i])[2]))
+                else:
+                    final.append((list[i],list[j]))
                 
     
     return final
@@ -26,7 +29,7 @@ def ult_pair_finder(map):
     for i in range(0,n-2):
         for j in range(i+1,n-1):
             if map.get(list[i])[0] == map.get(list[j])[0] and map.get(list[i])[1] == map.get(list[j])[1]:
-                final.append([list[i],list[j]])
+                final.append((list[i],list[j],map.get(list[i])[2]))
                 
     
     return final   
@@ -115,10 +118,16 @@ elif isContent:
     theList = pair_finder(finalMap,0)
 else:
     theList = pair_finder(finalMap,1)
+if isSize:
+    theList = sorted(theList, key = lambda x : x[2], reverse = True)    
 
+for paths in theList:
+    ch = ""
+    if isSize:
+        ch = paths[2]
+    print(paths[0] , "  ",paths[1], "   ", ch)
+    
 
-    
-    
 
 
 
