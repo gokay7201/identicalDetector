@@ -76,12 +76,12 @@ for currPath in args.strings:
     fileMap = dict()
 
     for root, dirs, files in os.walk(currPath,topdown = False):
-        alist = root.split('\\')# take care of this
+        alist = root.split('\\')# os.path.split kullanılabilir
         dirName = alist.pop()
         hashList = []
         dirSize = 0
         if dirs == [] and files == []:
-            hashList.append(hashlib.sha256("".encode()).hexdigest())
+            hashList.append(hashlib.sha256("".encode()).hexdigest())#bunu yaptıktan sonra aslinda continue yapabiliriz
             
         for direct in dirs:
             x = os.path.join(root, direct)
@@ -95,14 +95,14 @@ for currPath in args.strings:
             fileMap[os.path.join(root,file)] = [sHash, file, size]
             hashList.append(sHash)
             dirSize += size
-            
+            #sorta dikkat
         hashList.sort()
         str = ""
-        for hshs in hashList:
+        for hshs in hashList:#tek eleman olunca onun hashini yine sortluyoz ona bir bakalım
             str += hshs
             
         dirHash = hashlib.sha256(str.encode()).hexdigest()
-        dirMap[root] = [dirHash, dirName,dirSize]
+        dirMap[root] = [dirHash, dirName,dirSize] #dirname yerine hashli bir şey koyabiliriz
 
     #now processing part
     #choosing the map
