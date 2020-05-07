@@ -77,7 +77,7 @@ for currPath in args.strings:
 
     for root, dirs, files in os.walk(currPath,topdown = False):
         alist = os.path.split(root)# os.path.split kullanilabilir
-        dirName = alist.pop()
+        dirName = alist[1]
         hashList = []
         nameHashList=[]
         dirSize = 0
