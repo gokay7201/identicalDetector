@@ -9,16 +9,24 @@ def pair_finder(map, index):
     for x in keys:
         list.append(x)
     n = len(list)
-    for i in range(0,n-2):
-        for j in range(i+1,n-1):
-            if map.get(list[i])[index] == map.get(list[j])[index]:
-                if index == 0:
-                    final.append((list[i],list[j],map.get(list[i])[2]))
-                else:
-                    final.append((list[i],list[j]))
+    for i in range(0,n-1):
+        if final == []:
+            final.append([(list[i],map.get(list[i])[2])])
+            continue
+        for j in final:
+            if map.get(list[i])[index] == map.get(j[0][0])[index]:
+                j.append((list[i],map.get(list[i])[2]))
+                break
+        else:
+            final.append([(list[i],map.get(list[i])[2])])
+    
+    result = []
+    for y in final:
+        if len(y) > 1:
+            result.append(sorted(y, key = lambda x : x[0]))
                 
     
-    return final
+    return result
 def ult_pair_finder(map):
     keys = map.keys()
     final = []
@@ -26,13 +34,24 @@ def ult_pair_finder(map):
     for x in keys:
         list.append(x)
     n = len(list)
-    for i in range(0,n-2):
-        for j in range(i+1,n-1):
-            if map.get(list[i])[0] == map.get(list[j])[0] and map.get(list[i])[1] == map.get(list[j])[1]:
-                final.append((list[i],list[j],map.get(list[i])[2]))
+    for i in range(0,n-1):
+        if final == []:
+            final.append([(list[i],map.get(list[i])[2])])
+            continue
+        for j in final:
+            if map.get(list[i])[0] == map.get(j[0][0])[0] and map.get(list[i])[1] == map.get(j[0][0])[1]:
+                j.append((list[i],map.get(list[i])[2]))
+                break
+        else:
+            final.append([(list[i],map.get(list[i])[2])])
+    
+    result = []
+    for y in final:
+        if len(y) > 1:
+            result.append(sorted(y, key = lambda x : x[0]))
                 
     
-    return final   
+    return result    
     
 
 parser = argparse.ArgumentParser(prog = 'dene')
@@ -109,13 +128,13 @@ for currPath in args.strings:
         nameHashList.sort()
         str = ""
         nameStr = nameHash
-        for hshs in hashList:#tek eleman olunca onun hashini yine sortluyoz ona bir bakalım
+        for hshs in hashList:
             str += hshs
         for kmkm in nameHashList:
             nameStr += kmkm
         dirHash = hashlib.sha256(str.encode()).hexdigest()
         dirNameHash = hashlib.sha256(nameStr.encode()).hexdigest()
-        dirMap[root] = [dirHash, dirNameHash,dirSize] #dirname yerine hashli bir sey koyabiliriz
+        dirMap[root] = [dirHash, dirNameHash,dirSize] 
 
     #now processing part
     #choosing the map
@@ -132,13 +151,15 @@ for currPath in args.strings:
     else:
         theList = pair_finder(finalMap,1)
     if isSize:
-        theList = sorted(theList, key = lambda x : x[2], reverse = True)    
+        theList = sorted(theList, key = lambda x : x[0][1], reverse = True)    #this is a problem
 
     for paths in theList:
         ch = ""
-        if isSize:
-            ch = paths[2]
-        print(paths[0] , "  ",paths[1], "   ", ch)
+        for x in paths:
+            if isSize:
+                ch = x[1]
+            print(x[0] , "  ", ch)
+        print()    
     
 
 
