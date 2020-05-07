@@ -76,33 +76,46 @@ for currPath in args.strings:
     fileMap = dict()
 
     for root, dirs, files in os.walk(currPath,topdown = False):
-        alist = root.split('\\')# os.path.split kullanılabilir
+        alist = os.path.split(root)# os.path.split kullanilabilir
         dirName = alist.pop()
         hashList = []
+        nameHashList=[]
         dirSize = 0
+        nameHash = hashlib.sha256(dirName.encode()).hexdigest()
         if dirs == [] and files == []:
-            hashList.append(hashlib.sha256("".encode()).hexdigest())#bunu yaptıktan sonra aslinda continue yapabiliriz
+            emptyCont = hashlib.sha256("".encode()).hexdigest()
+            dirMap[root] = [emptyCont, nameHash,dirSize]
+            continue #continue for empty directory 
+        
             
         for direct in dirs:
             x = os.path.join(root, direct)
             hashList.append(dirMap.get(x)[0])
+            nameHashList.append(dirMap.get(x)[1])
             dirSize += dirMap.get(x)[2]
             
         for file in files:
-            content = open(os.path.join(root,file)).read()
+            y = os.path.join(root,file)
+            content = open(y).read()
             sHash = hashlib.sha256(content.encode()).hexdigest()
-            size = os.path.getsize(os.path.join(root,file))
-            fileMap[os.path.join(root,file)] = [sHash, file, size]
+            size = os.path.getsize(y)
+            fnameHash = hashlib.sha256(file.encode()).hexdigest()
+            fileMap[y] = [sHash, fnameHash, size]
             hashList.append(sHash)
+            nameHashList.append(fnameHash)
             dirSize += size
-            #sorta dikkat
+            
         hashList.sort()
+        nameHashList.sort()
         str = ""
+        nameStr = nameHash
         for hshs in hashList:#tek eleman olunca onun hashini yine sortluyoz ona bir bakalım
             str += hshs
-            
+        for kmkm in nameHashList:
+            nameStr += kmkm
         dirHash = hashlib.sha256(str.encode()).hexdigest()
-        dirMap[root] = [dirHash, dirName,dirSize] #dirname yerine hashli bir şey koyabiliriz
+        dirNameHash = hashlib.sha256(nameStr.encode()).hexdigest()
+        dirMap[root] = [dirHash, dirNameHash,dirSize] #dirname yerine hashli bir sey koyabiliriz
 
     #now processing part
     #choosing the map
