@@ -89,32 +89,33 @@ elif args.cn is True:
         exit()
     isName = True
     isContent = True
+    
+dirMap = dict()
+fileMap = dict()
 
 for currPath in args.strings:
-    dirMap = dict()
-    fileMap = dict()
 
     for root, dirs, files in os.walk(currPath,topdown = False):
-        alist = os.path.split(root)# os.path.split kullanilabilir
-        dirName = alist[1]
+        dirName = os.path.split(root)[1]
         hashList = []
         nameHashList=[]
         dirSize = 0
+        rootPath = os.path.abspath(root)
         nameHash = hashlib.sha256(dirName.encode()).hexdigest()
         if dirs == [] and files == []:
             emptyCont = hashlib.sha256("".encode()).hexdigest()
-            dirMap[root] = [emptyCont, nameHash,dirSize]
+            dirMap[rootPath] = [emptyCont, nameHash,dirSize]
             continue #continue for empty directory 
         
             
         for direct in dirs:
-            x = os.path.join(root, direct)
+            x = os.path.join(rootPath, direct)
             hashList.append(dirMap.get(x)[0])
             nameHashList.append(dirMap.get(x)[1])
             dirSize += dirMap.get(x)[2]
             
         for file in files:
-            y = os.path.join(root,file)
+            y = os.path.join(rootPath,file)
             content = open(y).read()
             sHash = hashlib.sha256(content.encode()).hexdigest()
             size = os.path.getsize(y)
@@ -134,32 +135,32 @@ for currPath in args.strings:
             nameStr += kmkm
         dirHash = hashlib.sha256(str.encode()).hexdigest()
         dirNameHash = hashlib.sha256(nameStr.encode()).hexdigest()
-        dirMap[root] = [dirHash, dirNameHash,dirSize] 
+        dirMap[rootPath] = [dirHash, dirNameHash,dirSize] 
 
     #now processing part
     #choosing the map
-    finalMap = {}
-    if isDir:
-        finalMap = dirMap
-    else:
-        finalMap = fileMap
-    theList = []
-    if isContent and isName:
-        theList = ult_pair_finder(finalMap)
-    elif isContent:
-        theList = pair_finder(finalMap,0)
-    else:
-        theList = pair_finder(finalMap,1)
-    if isSize:
-        theList = sorted(theList, key = lambda x : x[0][1], reverse = True)    #this is a problem
+finalMap = {}
+if isDir:
+    finalMap = dirMap
+else:
+    finalMap = fileMap
+theList = []
+if isContent and isName:
+    theList = ult_pair_finder(finalMap)
+elif isContent:
+    theList = pair_finder(finalMap,0)
+else:
+    theList = pair_finder(finalMap,1)
+if isSize:
+    theList = sorted(theList, key = lambda x : x[0][1], reverse = True)    #this is a problem
 
-    for paths in theList:
-        ch = ""
-        for x in paths:
-            if isSize:
-                ch = x[1]
-            print(x[0] , "  ", ch)
-        print()    
+for paths in theList:
+    ch = ""
+    for x in paths:
+        if isSize:
+            ch = x[1]
+        print(x[0] , "  ", ch)
+    print()    
     
 
 
