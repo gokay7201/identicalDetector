@@ -2,6 +2,11 @@ import argparse
 import os
 import hashlib
 
+def get_hash(file):
+    with open(file, "rb") as f:
+        content = f.read()
+    return hashlib.sha256(content).hexdigest()
+
 def pair_finder(map, index):
     keys = map.keys()
     final = []
@@ -116,8 +121,7 @@ for currPath in args.strings:
             
         for file in files:
             y = os.path.join(rootPath,file)
-            content = open(y).read()
-            sHash = hashlib.sha256(content.encode()).hexdigest()
+            sHash = get_hash(y)
             size = os.path.getsize(y)
             fnameHash = hashlib.sha256(file.encode()).hexdigest()
             fileMap[y] = [sHash, fnameHash, size]
@@ -151,6 +155,7 @@ elif isContent:
     theList = pair_finder(finalMap,0)
 else:
     theList = pair_finder(finalMap,1)
+theList= sorted(theList, key = lambda x : x[0][0])
 if isSize:
     theList = sorted(theList, key = lambda x : x[0][1], reverse = True)    #this is a problem
 
