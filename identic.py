@@ -14,7 +14,7 @@ def pair_finder(map, index):
     for x in keys:
         list.append(x)
     n = len(list)
-    for i in range(0,n-1):
+    for i in range(0,n):
         if final == []:
             final.append([(list[i],map.get(list[i])[2])])
             continue
@@ -39,7 +39,7 @@ def ult_pair_finder(map):
     for x in keys:
         list.append(x)
     n = len(list)
-    for i in range(0,n-1):
+    for i in range(0,n):
         if final == []:
             final.append([(list[i],map.get(list[i])[2])])
             continue
@@ -143,7 +143,7 @@ for currPath in args.strings:
 
     #now processing part
     #choosing the map
-finalMap = {}
+finalMap = dict()
 if isDir:
     finalMap = dirMap
 else:
@@ -164,7 +164,7 @@ for paths in theList:
     for x in paths:
         if isSize:
             ch = x[1]
-        print(x[0] , "  ", ch)
+        print(x[0] , "\t", ch)
     print()    
     
 
