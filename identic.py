@@ -4,9 +4,15 @@ import hashlib
 #import time
 #start_time = time.time()
 def get_hash(file):
+    blockSize = 65536
+    fileHash = hashlib.sha256()
     with open(file, "rb") as f:
-        content = f.read()
-    return hashlib.sha256(content).hexdigest()
+        fBytes = f.read(blockSize)
+        while len(fBytes) >0:
+            fileHash.update(fBytes)
+            fBytes = f.read(blockSize)
+        
+    return fileHash.hexdigest()
 
 def pair_finder(map, index):
     keys = map.keys()
