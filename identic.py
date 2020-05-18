@@ -1,7 +1,8 @@
 import argparse
 import os
 import hashlib
-
+#import time
+#start_time = time.time()
 def get_hash(file):
     with open(file, "rb") as f:
         content = f.read()
@@ -104,15 +105,11 @@ for currPath in args.strings:
         dirName = os.path.split(root)[1]
         hashList = []
         nameHashList=[]
+        marker = hashlib.sha256("directory".encode()).hexdigest()
         dirSize = 0
         rootPath = os.path.abspath(root)
         nameHash = hashlib.sha256(dirName.encode()).hexdigest()
-        if dirs == [] and files == []:
-            emptyCont = hashlib.sha256("".encode()).hexdigest()
-            dirMap[rootPath] = [emptyCont, nameHash,dirSize]
-            continue #continue for empty directory 
-        
-            
+         
         for direct in dirs:
             x = os.path.join(rootPath, direct)
             hashList.append(dirMap.get(x)[0])
@@ -137,6 +134,8 @@ for currPath in args.strings:
             str += hshs
         for kmkm in nameHashList:
             nameStr += kmkm
+        str+= marker
+        nameStr += marker
         dirHash = hashlib.sha256(str.encode()).hexdigest()
         dirNameHash = hashlib.sha256(nameStr.encode()).hexdigest()
         dirMap[rootPath] = [dirHash, dirNameHash,dirSize] 
@@ -168,9 +167,4 @@ for paths in theList:
     print()    
     
 
-
-
-
-
-
-
+#print("--- %s seconds ---" % (time.time() - start_time))
