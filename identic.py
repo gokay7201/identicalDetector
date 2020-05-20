@@ -1,8 +1,7 @@
 import argparse
 import os
 import hashlib
-#import time
-#start_time = time.time()
+
 def get_hash(file):
     blockSize = 65536
     fileHash = hashlib.sha256()
@@ -13,7 +12,8 @@ def get_hash(file):
             fBytes = f.read(blockSize)
         
     return fileHash.hexdigest()
-
+#pair_finder is for -n and -c options seperately
+#find the duplicates for one type
 def pair_finder(map, index):
     keys = map.keys()
     final = []
@@ -39,6 +39,8 @@ def pair_finder(map, index):
                 
     
     return result
+#ult_pair_finder is for -cn options
+#looks for two type of hashes at the same time
 def ult_pair_finder(map):
     keys = map.keys()
     final = []
@@ -64,8 +66,7 @@ def ult_pair_finder(map):
                 
     
     return result    
-    
-
+#the part parses the arguments controls conditions    
 parser = argparse.ArgumentParser(prog = 'dene')
 parser.add_argument("-d", action="store_true", default = False)
 parser.add_argument("-f", action="store_true",default= False)
@@ -73,7 +74,7 @@ parser.add_argument("-c",action="store_true",default= False)
 parser.add_argument("-n",action="store_true",default=False)
 parser.add_argument("-cn", action="store_true",default=False)
 parser.add_argument("-s",action="store_true",default=False)
-parser.add_argument("strings",nargs = '*',default=".")
+parser.add_argument("strings",nargs = '*',default=["."])
 args = parser.parse_args()
 
 if args.d and args.f is True:
@@ -104,7 +105,8 @@ elif args.cn is True:
     
 dirMap = dict()
 fileMap = dict()
-
+#loop for finding all of the hashes of all directories and files
+#for the given directories
 for currPath in args.strings:
 
     for root, dirs, files in os.walk(currPath,topdown = False):
@@ -146,13 +148,14 @@ for currPath in args.strings:
         dirNameHash = hashlib.sha256(nameStr.encode()).hexdigest()
         dirMap[rootPath] = [dirHash, dirNameHash,dirSize] 
 
-    #now processing part
-    #choosing the map
+#now processing part
+#choosing the map
 finalMap = dict()
 if isDir:
     finalMap = dirMap
 else:
     finalMap = fileMap
+#elimination part    
 theList = []
 if isContent and isName:
     theList = ult_pair_finder(finalMap)
@@ -162,8 +165,8 @@ else:
     theList = pair_finder(finalMap,1)
 theList= sorted(theList, key = lambda x : x[0][0])
 if isSize:
-    theList = sorted(theList, key = lambda x : x[0][1], reverse = True)    #this is a problem
-
+    theList = sorted(theList, key = lambda x : x[0][1], reverse = True) 
+#after elimination and sorting here is the printing part
 for paths in theList:
     ch = ""
     for x in paths:
@@ -172,5 +175,3 @@ for paths in theList:
         print(x[0] , "\t", ch)
     print()    
     
-
-#print("--- %s seconds ---" % (time.time() - start_time))
